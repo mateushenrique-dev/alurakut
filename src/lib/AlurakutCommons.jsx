@@ -232,6 +232,8 @@ AlurakutProfileSidebarMenuDefault.Wrapper = styled.div`
     align-items: center;
     justify-content: flex-start;
     text-decoration: none;
+    margin-top: 16px;
+    
     img {
       width: 16px;
       height: 16px;
