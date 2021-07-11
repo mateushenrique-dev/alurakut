@@ -1,47 +1,34 @@
 import React, { useEffect, useState } from "react";
 import Box from "../components/Box";
+import { FormWrapper } from "../components/Form";
+import { Loading } from "../components/Loading";
 import MainGrid from "../components/MainGrid";
 import { ProfileRelationsBoxWrapper } from "../components/ProfileRelations";
+import { ProfileSideBar } from '../components/ProfileSideBar';
 import {
   AlurakutMenu,
-  AlurakutProfileSidebarMenuDefault,
   OrkutNostalgicIconSet,
 } from "../lib/AlurakutCommons";
 
-interface IProfileSideBarProps {
-  user: string;
-}
-
-function ProfileSideBar({ user }: IProfileSideBarProps) {
-  return (
-    <Box as="aside">
-      <img
-        style={{ borderRadius: "8px" }}
-        src={`https://github.com/${user}.png`}
-        alt="Profile Picture"
-      />
-      <hr />
-      <p>
-        <a className="boxLink" href={`https://github.com/${user}`}>
-          @{user}
-        </a>
-      </p>
-      <AlurakutProfileSidebarMenuDefault />
-    </Box>
-  );
+interface IComunidade {
+  id: string
+  title: string;
+  imageurl: string;
+  creatorSlug: string;
 }
 
 export default function Home() {
+
   const githubUser = "mateushenrique-dev";
   const [pessoasFavoritas, setPessoasFavoritas] = useState([
     {
       id: "0",
-      title: "juunegreiros",
-      imageurl: `https://github.com/juunegreiros.png`,
+      title: "mateushenrique-dev",
+      imageurl: `https://github.com/mateushenrique-dev.png`,
     },
   ]);
-
-  const [comunidades, setComunidades] = useState([]);
+  const [comunidades, setComunidades] = useState([] as IComunidade[]);
+  const [isLoadingHidden, setIsLoadingHidden] = useState(false);
 
   useEffect(() => {
     fetch("https://graphql.datocms.com/", {
@@ -69,11 +56,13 @@ export default function Home() {
         console.log(data);
         const comunidadesDato = data.data.allCommunities;
         setComunidades(comunidadesDato);
+        setIsLoadingHidden(true)
       });
   }, []);
 
   return (
     <>
+      <Loading hidden={isLoadingHidden} />
       <AlurakutMenu githubUser={githubUser} />
       <MainGrid>
         <div className="profileArea" style={{ gridArea: "profileArea" }}>
@@ -87,50 +76,7 @@ export default function Home() {
 
           <Box>
             <h2 className="subTitle">O que você deseja fazer?</h2>
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-
-                const dadosForm = new FormData(e.target as HTMLFormElement);
-
-                const comunidadeDados = {
-                  title: dadosForm.get("title").toString(),
-                  imageurl: dadosForm.get("image").toString(),
-                  creatorSlug: githubUser,
-                };
-
-                await fetch("/api/comunidades", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify(comunidadeDados),
-                });
-
-                const comunidadesAtualizada = [...comunidades, comunidadeDados];
-                setComunidades(comunidadesAtualizada);
-              }}
-            >
-              <div>
-                <input
-                  type="text"
-                  placeholder="Qual vai ser o nome da sua comunidade?"
-                  name="title"
-                  aria-label="Qual vai ser o nome da sua comunidade?"
-                />
-              </div>
-
-              <div>
-                <input
-                  type="urç"
-                  placeholder="Coloque uma URL para usarmos de capa"
-                  name="image"
-                  aria-label="Coloque uma URL para usarmos de capa"
-                />
-              </div>
-
-              <button>Criar comunidade</button>
-            </form>
+            <FormWrapper comunidades={comunidades} setComunidades={setComunidades} githubUser={githubUser}  />
           </Box>
         </div>
         <div

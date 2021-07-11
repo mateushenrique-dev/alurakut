@@ -67,6 +67,7 @@ export function ProfileRelationsBoxWrapper({
   title,
   content,
 }: IProfileRelationsBoxWrapperProps) {
+
   return (
     <ProfileRelationsBox>
       <h2 className="smallTitle">
@@ -85,6 +86,8 @@ export function ProfileRelationsBoxWrapper({
           );
         })}
       </ul>
+
+      <a className="boxLink">Ver todos</a>
     </ProfileRelationsBox>
   );
 }
