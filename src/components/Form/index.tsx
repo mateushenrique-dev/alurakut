@@ -21,15 +21,11 @@ interface Errors {
 const Form = styled.form`
   .error {
     border: 2px solid rgba(255, 0, 80);
-  }
-`;
 
-const TextError = styled.p`
-  font-size: 12px;
-  margin-bottom: 5px;
-  font-weight: 700;
-  color: rgba(255, 0, 80);
-  margin-left: 15px;
+    ::placeholder {
+      color: rgba(255, 0, 80);
+    }
+  }
 `;
 
 export function FormWrapper({ githubUser, comunidades, setComunidades }: IForm) {
@@ -39,14 +35,6 @@ export function FormWrapper({ githubUser, comunidades, setComunidades }: IForm) 
     title: { error: false, message: "" },
     image: { error: false, message: "" },
   });
-
-  function ErrorText(field: string) {
-    if (errors[field].error) {
-      return <TextError>{errors[field].message}</TextError>
-    } else {
-      return
-    }
-  }
 
   function validate(e: React.ChangeEvent<HTMLInputElement>) {
     const formField = e.target;
@@ -86,10 +74,13 @@ export function FormWrapper({ githubUser, comunidades, setComunidades }: IForm) 
       }}
     >
       <div>
-        {ErrorText("title")}
         <input
           type="text"
-          placeholder="Qual vai ser o nome da sua comunidade?"
+          placeholder={
+            errors.title.error
+              ? `${errors.title.message}`
+              : "Qual vai ser o nome da sua comunidade?"
+          }
           name="title"
           aria-label="Qual vai ser o nome da sua comunidade?"
           onBlur={(e) => validate(e)}
@@ -99,10 +90,13 @@ export function FormWrapper({ githubUser, comunidades, setComunidades }: IForm) 
       </div>
 
       <div>
-        {ErrorText("image")}
         <input
           type="url"
-          placeholder="Coloque uma URL para usarmos de capa"
+          placeholder={
+            errors.image.error
+              ? `${errors.image.message}`
+              : "Coloque uma URL para usarmos de capa"
+          }
           name="image"
           aria-label="Coloque uma URL para usarmos de capa"
           className={errors.image.error ? "error" : ""}
