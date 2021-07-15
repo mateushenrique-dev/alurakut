@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from "react";
+import nookies from "nookies";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import Box from "../components/Box";
 import { FormWrapper } from "../components/Form";
 import { Loading } from "../components/Loading";
 import MainGrid from "../components/MainGrid";
 import { ProfileRelationsBoxWrapper } from "../components/ProfileRelations";
-import { ProfileSideBar } from '../components/ProfileSideBar';
-import {
-  AlurakutMenu,
-  OrkutNostalgicIconSet,
-} from "../lib/AlurakutCommons";
+import { ProfileSideBar } from "../components/ProfileSideBar";
+import { AlurakutMenu, OrkutNostalgicIconSet } from "../lib/AlurakutCommons";
 
 interface IComunidade {
-  id: string
+  id: string;
   title: string;
   imageurl: string;
   creatorSlug: string;
 }
 
-export default function Home() {
+interface IHomeProps {
+  githubUser: string;
+}
 
-  const githubUser = "mateushenrique-dev";
+export default function Home({ githubUser }: IHomeProps) {
   const [pessoasFavoritas, setPessoasFavoritas] = useState([
     {
       id: "0",
@@ -56,7 +57,7 @@ export default function Home() {
         console.log(data);
         const comunidadesDato = data.data.allCommunities;
         setComunidades(comunidadesDato);
-        setIsLoadingHidden(true)
+        setIsLoadingHidden(true);
       });
   }, []);
 
@@ -76,7 +77,11 @@ export default function Home() {
 
           <Box>
             <h2 className="subTitle">O que você deseja fazer?</h2>
-            <FormWrapper comunidades={comunidades} setComunidades={setComunidades} githubUser={githubUser}  />
+            <FormWrapper
+              comunidades={comunidades}
+              setComunidades={setComunidades}
+              githubUser={githubUser}
+            />
           </Box>
         </div>
         <div
@@ -95,4 +100,38 @@ export default function Home() {
       </MainGrid>
     </>
   );
+}
+
+export async function getServerSideProps(context: any) {
+  const cookies = nookies.get(context);
+  const token = cookies.USER_TOKEN;
+
+  const response = await fetch("https://alurakut.vercel.app/api/auth", {
+    headers: {
+      Authorization: token,
+    },
+  });
+
+  const { isAuthenticated } = await response.json();
+
+  if (!isAuthenticated) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  interface IGithubUser {
+    githubUser: string;
+  }
+
+  const { githubUser }: IGithubUser = jwt.decode(token) as IGithubUser;
+
+  return {
+    props: {
+      githubUser,
+    },
+  };
 }

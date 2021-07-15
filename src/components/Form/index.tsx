@@ -24,6 +24,7 @@ const Form = styled.form`
 
     ::placeholder {
       color: rgba(255, 0, 80);
+      font-weight: 700;
     }
   }
 `;
