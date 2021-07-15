@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import styled from "styled-components";
 import Box from "../Box";
 
@@ -54,7 +55,7 @@ const ProfileRelationsBox = styled(Box)`
 interface IContent {
   title: string;
   imageurl: string;
-  id: string;
+  id: number | string;
   creatorSlug?: string;
 }
 
@@ -68,6 +69,9 @@ export function ProfileRelationsBoxWrapper({
   content,
 }: IProfileRelationsBoxWrapperProps) {
 
+  useEffect(() => console.log(content));
+ 
+
   return (
     <ProfileRelationsBox>
       <h2 className="smallTitle">
@@ -78,7 +82,7 @@ export function ProfileRelationsBoxWrapper({
         {content.slice(0, 6).map((content) => {
           return (
             <li key={content.id}>
-              <a href={`/${content.id}`}>
+              <a href={`/users/${content.title}`}>
                 <img src={`${content.imageurl}`} alt="" />
                 <span>{content.title}</span>
               </a>

@@ -9,21 +9,33 @@ import { ProfileRelationsBoxWrapper } from "../components/ProfileRelations";
 import { ProfileSideBar } from "../components/ProfileSideBar";
 import { AlurakutMenu, OrkutNostalgicIconSet } from "../lib/AlurakutCommons";
 
-interface IComunidade {
+export interface IComunidade {
   id: string;
   title: string;
   imageurl: string;
   creatorSlug: string;
 }
 
-interface IHomeProps {
+export interface IHomeProps {
   githubUser: string;
 }
 
+export interface IPessoasFavoritas {
+  id: number;
+  title: string;
+  imageurl: string;
+}
+
+export interface IGithubAPI {
+  login: string,
+  id: number;
+  avatar_url: string;
+}
+
 export default function Home({ githubUser }: IHomeProps) {
-  const [pessoasFavoritas, setPessoasFavoritas] = useState([
+  const [pessoasFavoritas, setPessoasFavoritas] = useState<IPessoasFavoritas[]>([
     {
-      id: "0",
+      id: 0,
       title: "mateushenrique-dev",
       imageurl: `https://github.com/mateushenrique-dev.png`,
     },
@@ -54,10 +66,25 @@ export default function Home({ githubUser }: IHomeProps) {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         const comunidadesDato = data.data.allCommunities;
         setComunidades(comunidadesDato);
         setIsLoadingHidden(true);
+      });
+    
+    fetch(`https://api.github.com/users/${githubUser}/followers`)
+      .then((response) => response.json())
+      .then((data: IGithubAPI[]) => {
+        let newPessoasFavoritas: IPessoasFavoritas[] = []
+
+        data.forEach((response) => {
+          newPessoasFavoritas.push({
+            id: response.id,
+            title: response.login,
+            imageurl: response.avatar_url,
+          });
+        })
+
+        setPessoasFavoritas(newPessoasFavoritas);
       });
   }, []);
 
