@@ -6,6 +6,7 @@ import { IPessoasFavoritas, IGithubAPI } from "../index";
 import { ProfileRelationsBoxWrapper } from "../../components/ProfileRelations";
 import { AlurakutMenu } from "../../lib/AlurakutCommons";
 import { Loading } from "../../components/Loading";
+import { Profile } from "../../components/Profile";
 
 interface IUserInfos {
   login: string;
@@ -32,60 +33,18 @@ export default function Perfil() {
     }
   `;
 
-  const Profile = styled(Box)`
-
-    .profileTitle {
-      margin: 16px 0;
-    }
-    .profileBio {
-      margin-bottom: 16px;
-    }
-    .profileFollowers {
-      margin-right: 16px;
-    }
-
-    @media (min-width: 861px) {
-      grid-template-columns: 1fr 1fr;
-      display: grid;
-      align-items: center;
-
-      .profileImage {
-        border-radius: 8px;
-      }
-
-      .profileTitle {
-        grid-column: 1;
-      }
-
-      .profileFollowers {
-        grid-column: 1;
-        font-weight: 700;
-      }
-
-      .profileBlog {
-        grid-column: 2;
-      }
-
-      .profileBio {
-        grid-column: 1;
-      }
-    }
-  `;
-
-  const [pessoasFavoritas, setPessoasFavoritas] = useState<IPessoasFavoritas[]>(
-    []
-  );
+  const [pessoasFavoritas, setPessoasFavoritas] = useState<IPessoasFavoritas[]>([]);
   const [userInfos, setUserInfos] = useState<IUserInfos>({
-    login: '',
-    id: '',
-    bio: '',
-    name: '',
-    blog: '',
+    login: "",
+    id: "",
+    bio: "",
+    name: "",
+    blog: "",
     followers: 0,
     following: 0,
-    html_url: '',
+    html_url: "",
   });
-  const [isLoadingHidden, setIsLoadingHidden] = useState(false)
+  const [isLoadingHidden, setIsLoadingHidden] = useState(false);
 
   useEffect(() => {
     fetch(`https://api.github.com/users/${githubUser}/followers`)
@@ -100,16 +59,16 @@ export default function Perfil() {
             imageurl: response.avatar_url,
           });
         });
-        
+
         setPessoasFavoritas(newPessoasFavoritas);
       });
     fetch(`https://api.github.com/users/${githubUser}`)
       .then((response) => response.json())
       .then((data) => {
-        setUserInfos(data)
-        setIsLoadingHidden(true)
-      })
-  }, []);
+        setUserInfos(data);
+        setIsLoadingHidden(true);
+      });
+  }, [githubUser]);
 
   return (
     <>
@@ -135,7 +94,10 @@ export default function Perfil() {
             Following: {userInfos.following}
           </span>
           <span className="profileBlog">
-            Blog: <a target="_blank" href={userInfos.blog}>{userInfos.blog ? userInfos.blog  : 'Não possui'}</a>
+            Blog:{" "}
+            <a target="_blank" href={userInfos.blog}>
+              {userInfos.blog ? userInfos.blog : "Não possui"}
+            </a>
           </span>
         </Profile>
         <ProfileRelationsBoxWrapper
@@ -145,12 +107,4 @@ export default function Perfil() {
       </Main>
     </>
   );
-}
-
-export async function getServerSideProps() {
-  return {
-    props: {
-
-    }
-  }
 }
