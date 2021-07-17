@@ -69,9 +69,6 @@ export function ProfileRelationsBoxWrapper({
   content,
 }: IProfileRelationsBoxWrapperProps) {
 
-  useEffect(() => console.log(content));
- 
-
   return (
     <ProfileRelationsBox>
       <h2 className="smallTitle">

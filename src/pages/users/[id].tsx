@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
-import Box from "../../components/Box";
 import { IPessoasFavoritas, IGithubAPI } from "../index";
 import { ProfileRelationsBoxWrapper } from "../../components/ProfileRelations";
 import { AlurakutMenu } from "../../lib/AlurakutCommons";
